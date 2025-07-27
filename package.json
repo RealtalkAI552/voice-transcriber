@@ -8,8 +8,9 @@
   },
   "dependencies": {
     "form-data": "^4.0.0",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest"
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "formidable": "^3.5.0"
   }
 }
