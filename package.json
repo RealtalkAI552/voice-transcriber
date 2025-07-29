@@ -1,5 +1,5 @@
 {
-  "name": "voice-transcriber-ke92",
+  "name": "voice-transcriber",
   "version": "1.0.0",
   "scripts": {
     "dev": "next dev",
@@ -9,6 +9,7 @@
   "dependencies": {
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "formidable": "^3.5.0"
   }
 }
