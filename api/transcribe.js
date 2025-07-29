@@ -1,33 +1,31 @@
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// pages/api/transcribe.js
 
-import formidable from 'formidable';
-import fs from 'fs';
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Only POST requests allowed' });
+  }
 
-const handler = async (req, res) => {
-  const form = new formidable.IncomingForm();
-  form.parse(req, async function (err, fields, files) {
-    const audio = fs.createReadStream(files.file.filepath);
+  const { audioUrl } = req.body;
 
-    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-      method: 'POST',
+  try {
+    const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+      method: "POST",
       headers: {
-        Authorization: Bearer ${process.env.OPENAI_API_KEY},
+        "Authorization": Bearer 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
       },
       body: (() => {
         const data = new FormData();
-        data.append('file', audio);
-        data.append('model', 'whisper-1');
+        data.append("file", audioUrl);
+        data.append("model", "whisper-1");
         return data;
-      })(),
+      })()
     });
 
     const data = await response.json();
-    res.status(200).json({ text: data.text });
-  });
-};
+    return res.status(200).json(data);
 
-export default handler;
+  } catch (err) {
+    console.error("Error:", err);
+    return res.status(500).json({ error: "Failed to transcribe audio" });
+  }
+}
