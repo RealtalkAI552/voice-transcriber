@@ -1,43 +1,38 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 export default function Home() {
   const [file, setFile] = useState(null);
-  const [transcribing, setTranscribing] = useState(false);
-  const [transcript, setTranscript] = useState("");
+  const [transcription, setTranscription] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleTranscribe = async () => {
+  const handleSubmit = async () => {
     if (!file) return;
-    setTranscribing(true);
-    const formData = new FormData();
-    formData.append("file", file);
 
-    const response = await fetch("/api/transcribe", {
-      method: "POST",
-      body: formData
+    setLoading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('/api/transcribe', {
+      method: 'POST',
+      body: file,
     });
 
-    const data = await response.json();
-    setTranscript(data.text);
-    setTranscribing(false);
+    const result = await response.json();
+    setTranscription(result.text || 'Error: ' + JSON.stringify(result.error));
+    setLoading(false);
   };
 
   return (
-    <div style={{ textAlign: "center", paddingTop: "50px" }}>
+    <div>
       <h1>RealTalk Voice Transcriber</h1>
-      <input type="file" accept="audio/*" onChange={handleFileChange} />
-      <br /><br />
-      <button onClick={handleTranscribe} disabled={transcribing}>
-        {transcribing ? "Transcribing..." : "Transcribe"}
+      <input type="file" accept="audio/*" onChange={e => setFile(e.target.files[0])} />
+      <button onClick={handleSubmit} disabled={loading}>
+        {loading ? 'Transcribing...' : 'Transcribe'}
       </button>
-      <br /><br />
-      {transcript && (
+      {transcription && (
         <div>
-          <h3>Transcription Result:</h3>
-          <p>{transcript}</p>
+          <h2>Transcription:</h2>
+          <p>{transcription}</p>
         </div>
       )}
     </div>
