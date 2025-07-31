@@ -1,39 +1,42 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export default function Home() {
   const [file, setFile] = useState(null);
-  const [transcript, setTranscript] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const [transcript, setTranscript] = useState("");
 
-  const handleUpload = async () => {
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleTranscribe = async () => {
     if (!file) return;
-
-    setLoading(true);
+    setTranscribing(true);
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
-    const response = await fetch('/api/transcribe', {
-      method: 'POST',
-      body: formData,
+    const response = await fetch("/api/transcribe", {
+      method: "POST",
+      body: formData
     });
 
     const data = await response.json();
     setTranscript(data.text);
-    setLoading(false);
+    setTranscribing(false);
   };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '40px' }}>
-      <h1>🎙️ RealTalk Voice Transcriber</h1>
-      <input type="file" accept="audio/*" onChange={e => setFile(e.target.files[0])} />
+    <div style={{ textAlign: "center", paddingTop: "50px" }}>
+      <h1>RealTalk Voice Transcriber</h1>
+      <input type="file" accept="audio/*" onChange={handleFileChange} />
       <br /><br />
-      <button onClick={handleUpload} disabled={loading}>
-        {loading ? 'Transcribing...' : 'Transcribe'}
+      <button onClick={handleTranscribe} disabled={transcribing}>
+        {transcribing ? "Transcribing..." : "Transcribe"}
       </button>
       <br /><br />
       {transcript && (
         <div>
-          <h3>📝 Transcript:</h3>
+          <h3>Transcription Result:</h3>
           <p>{transcript}</p>
         </div>
       )}
